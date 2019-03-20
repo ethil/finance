@@ -38,7 +38,7 @@ else:
 
 # the real stuff
 if len > components: # if there are more than 1 combination possible
-    print('Then, there will be {} cointegration tests.\n'.format(factorial(len)/(factorial(len-3)*factorial(3))))
+    print('Then, there will be {} cointegration tests.\n'.format(factorial(len)/(factorial(len-components)*factorial(components))))
     bucket = list(iter.combinations(tickers, components))
 
     for x in bucket:
@@ -47,7 +47,7 @@ if len > components: # if there are more than 1 combination possible
         # save simple results to file
         with open('cointegrations.csv', mode='a') as triplets:
             triplets = csv.writer(triplets, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-            triplets.writerow([hurst.round(3), hl.round(1), x, iter.chain(weights1)])
+            triplets.writerow([hurst.round(3), hl.round(1), x, weights1])
 
         print('\n')
 
