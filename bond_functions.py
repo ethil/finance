@@ -5,28 +5,29 @@ import numpy as np
 #
 def nominal(rate, frequency):
     if frequency > 999:
-        y = np.exp(rate) - 1
+        return np.exp(rate) - 1 # continuous
     else:
-        y = ( 1 + rate/frequency )**frequency - 1
-    return y
+        return ( 1 + rate/frequency )**frequency - 1 # compounded
 
 def continuous(rate, frequency):
     if frequency > 1:
-        rate = nominal(rate, frequency)
-    return np.log( 1 + rate )
+        return np.log( 1 + rate/frequency ) * frequency # compounded
+    else:
+        return np.log( 1 + rate ) # nominal
 
 def compounded(rate, frequency):
     if frequency > 999:
-        rate = nominal(rate,frequency)
-    return (( 1 + rate )**( 1/frequency ) - 1 ) * frequency
+        return ( np.exp(rate/frequency) - 1 ) * frequency # continuous
+    else:
+        return (( 1 + rate )**( 1/frequency ) - 1 ) * frequency # nominal
 
 #
 def BondAccrued(maturity, coupon, frequency):
-    return (1/frequency - maturity % frequency) * coupon/frequency
+    return ((1/frequency) - maturity % (1/frequency)) * coupon
 
 def BondPrice(rate, maturity, coupon, frequency): # time to maturity in years
-    first = max(maturity % frequency, 1/frequency)
-    timeline = np.linspace(first, maturity, int(np.floor(maturity*frequency)))
+    first = maturity % (1/frequency)
+    timeline = np.linspace(first, maturity, int(np.floor(maturity*frequency)+1))
     discount = np.exp(- rate * timeline)
     cashflows = np.ones(len(timeline)) * coupon/frequency
     cashflows[-1] = cashflows[-1] + 100
@@ -46,14 +47,14 @@ def BondYield(price, maturity, coupon, frequency): # yield to maturity
     return rate
 
 def BondPar(rate, maturity, coupon, frequency): # par yield
-    first = max(maturity % frequency, 1/frequency)
-    timeline = np.linspace(first, maturity, int(np.floor(maturity*frequency)))
+    first = maturity % (1/frequency)
+    timeline = np.linspace(first, maturity, int(np.floor(maturity*frequency)+1))
     discount = sum( np.exp(- rate * timeline) )
     return (100 * ( 1 - np.exp(- rate * maturity))) * frequency / discount
 
 def BondDuration(price, rate, maturity, coupon, frequency): # time to maturity in years
-    first = max(maturity % frequency, 1/frequency)
-    timeline = np.linspace(first, maturity, int(np.floor(maturity*frequency)))
+    first = maturity % (1/frequency)
+    timeline = np.linspace(first, maturity, int(np.floor(maturity*frequency)+1))
     discount = np.exp(- rate * timeline)
     cashflows = np.ones(len(timeline)) * coupon/frequency
     cashflows[-1] = cashflows[-1] + 100
@@ -61,6 +62,6 @@ def BondDuration(price, rate, maturity, coupon, frequency): # time to maturity i
     return np.dot( timeline, weights ) / price
 
 def BondDV01(price, rate, maturity, coupon, frequency): # d.B = -B*D*d.y ~ but convexity
-    up = BondPrice(rate+0.01, maturity, coupon, frequency) - price
-    dn = BondPrice(rate-0.01, maturity, coupon, frequency) - price
+    up = BondPrice(rate+0.001, maturity, coupon, frequency) - price
+    dn = BondPrice(rate-0.001, maturity, coupon, frequency) - price
     return up, dn
