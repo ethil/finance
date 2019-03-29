@@ -2,24 +2,23 @@
 # price and rate calculator
 import numpy as np
 
-#
-def nominal(rate, frequency):
-    if frequency > 999:
-        return np.exp(rate) - 1 # continuous
+# make sense of yields on the same bond
+def rosetta(rate, frequency, input_type, output_type):
+    if input_type == 'nominal':
+        if output_type == 'compounded':
+            return (( 1 + rate )**( 1/frequency ) - 1 ) * frequency
+        else:
+            return np.log( 1 + rate )
+    elif input_type == 'compounded':
+        if output_type == 'nominal':
+            return ( 1 + rate/frequency )**frequency - 1
+        else:
+            return np.log( 1 + rate/frequency ) * frequency
     else:
-        return ( 1 + rate/frequency )**frequency - 1 # compounded
-
-def continuous(rate, frequency):
-    if frequency > 1:
-        return np.log( 1 + rate/frequency ) * frequency # compounded
-    else:
-        return np.log( 1 + rate ) # nominal
-
-def compounded(rate, frequency):
-    if frequency > 999:
-        return ( np.exp(rate/frequency) - 1 ) * frequency # continuous
-    else:
-        return (( 1 + rate )**( 1/frequency ) - 1 ) * frequency # nominal
+        if output_type == 'nominal':
+            return np.exp(rate) - 1
+        else:
+            return ( np.exp(rate/frequency) - 1 ) * frequency
 
 #
 def BondAccrued(maturity, coupon, frequency):
