@@ -4,6 +4,9 @@ import sys
 import datetime as dt
 import bond_functions as b
 
+if len(sys.argv) < 5:
+    sys.stderr.write('Usage: price or yield, maturity, annual coupon, frequency\n')
+    sys.exit(1)
 
 jolly = float(sys.argv[1])
 maturity = sys.argv[2]
