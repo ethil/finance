@@ -48,5 +48,5 @@ else:
     itm   = opt.BSMcallITM(X,T,S,sigma,q,r)
 gamma = opt.BSMgamma(X,T,S,sigma,q,r)
 vega  = opt.BSMvega(X,T,S,sigma,q,r)
-print('Price: {:.3f}\nDelta: {:.3f}\nGamma: {:.3f}\nTheta: {:.3f}\nVega:  {:.3f}'.format(price,delta,gamma,theta,vega/100))
+print('Price: {:.5f}\nDelta: {:.3f}\nGamma: {:.3f}\nTheta: {:.5f}\nVega:  {:.5f}'.format(price,delta,gamma,theta,vega/100))
 print('Prob ITM: {:.1f}%\nImplied Vol: {:.1f}%'.format(itm*100,sigma*100))
