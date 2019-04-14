@@ -33,16 +33,19 @@ def BondPrice(rate, maturity, coupon, frequency): # time to maturity in years
     return np.dot( discount, cashflows )
 
 def BondYield(price, maturity, coupon, frequency): # yield to maturity
-    r1 = -0.1
-    r2 = 0.25
-    s = 0
-    while(abs(price - s) > 0.001):
-        rate = (r1+r2)/2
-        s = BondPrice(rate, maturity, coupon, frequency)
-        if s > price:
-            r1 = rate
-        else:
-            r2 = rate
+    if maturity < 1/frequency:
+        rate = np.log((100 + coupon/frequency) / price) / maturity
+    else:
+        r1 = -0.1
+        r2 = 0.25
+        s = 0
+        while(abs(price - s) > 0.001):
+            rate = (r1+r2)/2
+            s = BondPrice(rate, maturity, coupon, frequency)
+            if s > price:
+                r1 = rate
+            else:
+                r2 = rate
     return rate
 
 def BondPar(rate, maturity, coupon, frequency): # par yield
@@ -61,6 +64,6 @@ def BondDuration(price, rate, maturity, coupon, frequency): # time to maturity i
     return np.dot( timeline, weights ) / price
 
 def BondDV01(price, rate, maturity, coupon, frequency): # d.B = -B*D*d.y ~ but convexity
-    up = BondPrice(rate+0.001, maturity, coupon, frequency) - price
-    dn = BondPrice(rate-0.001, maturity, coupon, frequency) - price
+    up = BondPrice(rate+0.01, maturity, coupon, frequency) - price
+    dn = BondPrice(rate-0.01, maturity, coupon, frequency) - price
     return up, dn
