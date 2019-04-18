@@ -28,7 +28,6 @@ def find_nearest(df, value): # interpolate the yield a given time in the future 
 # import
 frequency = 2
 quotes = pd.read_excel('bond_quotes.xlsx', sheet_name='quotes')
-print (quotes.shape)
 ask = input('Date of market quotes? (d-m-Y): ')
 
 # get yields
@@ -49,6 +48,7 @@ data = {'Maturity': time,
         'Yield': rates
         }
 df = pd.DataFrame(data,columns= ['Maturity', 'Yield'])
+print(df.shape)
 
 maturities = df.Maturity.unique()
 time = []
@@ -67,12 +67,14 @@ print(df.shape)
 
 print (find_nearest(df, 10))
 
+
+yhat = savgol_filter(df.Yield, 33, 2) # window size , polynomial order
+df['Smooth'] = yhat
 # export
 df.to_csv('export', sep='\t', encoding='utf-8')
 
 # plot
-yhat = savgol_filter(df.Yield, 21, 2) # window size , polynomial order
 plt.plot(df.Maturity,df.Yield)
-plt.plot(df.Maturity,yhat, color='red')
+plt.plot(df.Maturity,df.Smooth, color='red')
 plt.ylabel('Yield')
 plt.show()
