@@ -68,7 +68,7 @@ print(df.shape)
 print (find_nearest(df, 10))
 
 
-yhat = savgol_filter(df.Yield, 33, 2) # window size , polynomial order
+yhat = savgol_filter(df.Yield, 39, 2) # window size , polynomial order
 df['Smooth'] = yhat
 # export
 df.to_csv('export', sep='\t', encoding='utf-8')
