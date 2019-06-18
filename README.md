@@ -1,2 +1,2 @@
 # finance
-Algos for pricing of financial prducts and trading algorithms
+Algos for the pricing of financial products and scraping scripts.
